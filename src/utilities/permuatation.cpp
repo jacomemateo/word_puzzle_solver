@@ -1,15 +1,15 @@
 #include <vector>
 #include <iostream>
-#include <thread>
+#include <fstream>
+
 using namespace std;
 
-void permute(short min_len, short max_len, vector<short>& nums, vector<short>& chosen, vector<vector<short>>& valid_moves, vector<vector<short>>& result) {
+void permute(short min_len, short max_len, vector<short>& nums, vector<short>& chosen, vector<vector<short>>& valid_moves, fstream& output_file) {
     if( chosen.size() >= min_len && chosen.size() <= max_len) {
         for(auto x : chosen) {
-            cout << x << ' ';
+            output_file << x << ' ';
         }
-        cout << endl;
-        result.push_back(chosen);
+        output_file << '\n';
     }
 
     if(chosen.size() == max_len) {
@@ -39,21 +39,21 @@ void permute(short min_len, short max_len, vector<short>& nums, vector<short>& c
 
             if(is_valid_pos) {
                 chosen.push_back( nums[i] );
-                permute(min_len, max_len, nums, chosen, valid_moves, result);
+                permute(min_len, max_len, nums, chosen, valid_moves, output_file);
                 chosen.pop_back();  
             }
         } else {
             chosen.push_back( nums[i] );
-            permute(min_len, max_len, nums, chosen, valid_moves, result);
+            permute(min_len, max_len, nums, chosen, valid_moves, output_file);
             chosen.pop_back();  
         }
 
     }
 }
 
-void permutation(short min_len, short max_len, vector<short> nums, vector<vector<short>>& valid_moves, vector<vector<short>>& result) {
+void permutation(short min_len, short max_len, vector<short> nums, vector<vector<short>>& valid_moves, fstream& output_file) {
     vector<short> chosen;
-    permute(min_len, max_len, nums, chosen, valid_moves, result);
+    permute(min_len, max_len, nums, chosen, valid_moves, output_file);
 }
 
 void gen_valid_moves(vector<vector<short>>& valid_moves) {
@@ -93,6 +93,13 @@ void gen_valid_moves(vector<vector<short>>& valid_moves) {
 }
 
 int main() {
+    fstream valid_positions;
+    valid_positions.open( OUTPUT_DIR + "valid_positions.txt"s , ios::out);
+    if(!valid_positions.is_open()) {
+        cerr << "Error opening new file." << endl;
+        return -1;
+    }
+
     vector<vector<short>> valid_moves;
     gen_valid_moves(valid_moves);
 
@@ -101,14 +108,7 @@ int main() {
     short min_len = 1;
     short max_len = 8;
 
-    permutation(min_len, max_len, nums, valid_moves, result);
+    permutation(min_len, max_len, nums, valid_moves, valid_positions);
 
-    // for(auto &nums : result) {
-    //     for(auto &num : nums) {
-    //         cout << num  << ' ';
-    //     }
-    //     cout << endl;
-    // }
-
-    cout << "SIZE: " << result.size() << endl;
+    valid_positions.close();
 }
