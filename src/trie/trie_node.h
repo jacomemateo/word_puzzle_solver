@@ -11,7 +11,7 @@ using namespace std;
 template <typename T>
 class TrieNode : public std::enable_shared_from_this<TrieNode<T>> {
 public:
-    // friend class WordHuntSolver;
+    friend class WordHuntSolver;
 
     TrieNode(); // Default constructor
     explicit TrieNode(T data, shared_ptr<TrieNode<T>> prev = nullptr); // Constructor with data and previous node

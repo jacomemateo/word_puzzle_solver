@@ -94,7 +94,7 @@ void gen_valid_moves(vector<vector<short>>& valid_moves) {
 
 int main() {
     fstream valid_positions;
-    valid_positions.open( OUTPUT_DIR + "valid_positions.txt"s , ios::out);
+    valid_positions.open( OUTPUT_DIR + "positions.txt"s , ios::out);
     if(!valid_positions.is_open()) {
         cerr << "Error opening new file." << endl;
         return -1;

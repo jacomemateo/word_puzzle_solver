@@ -5,33 +5,22 @@
 #include "word_hunt_solver.h"
 using namespace std;
 
+void convert(vector<string>& puz, short num) {
+    cout << puz[(num-1)/4][(num-1)%4];
+}
+
 int main() {
-    set<string> puzzle_vec = {
+    vector<string> puzzle_vec = {
         "EOUP",
         "DRTC",
         "BSFA",
-        "JGAT"
+        "JGST"
     };
 
-    fstream dict_file;
-    dict_file.open( OUTPUT_DIR + "clean_words.txt"s , ios::in);
-    if(!dict_file.is_open()) {
-        cerr << "Error opening dict file." << endl;
-        return -1;
-    } 
 
-    tree<char> alphabet_tree;
-    alphabet_tree.add_word("GOATED");
-    alphabet_tree.add_word("GOAT");
+    // WordHuntSolver whs = WordHuntSolver("words.txt", "positions.txt", puzzle_vec);
+    WordHuntSolver whs = WordHuntSolver("test_words.txt", "test_positions.txt", puzzle_vec);
 
-    cout << alphabet_tree << endl;
+    whs.find();
 
-    tree<int> path_tree;
-    path_tree.add_word( {1} );
-    path_tree.add_word( {1, 2} );
-    path_tree.add_word( {16, 12, 8, 4} );
-
-    // for()
-
-    cout << path_tree << endl;
 }

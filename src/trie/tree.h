@@ -28,7 +28,7 @@ template<typename T>
 requires arithmetic<T>
 class tree {
 public:
-    // friend class WordHuntSolver;
+    friend class WordHuntSolver;
     tree();
 
     void add_word(const tree_traits<T>::container_type & line);
