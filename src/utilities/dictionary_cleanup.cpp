@@ -17,7 +17,7 @@ int main() {
     }
 
     fstream new_dict;
-    new_dict.open( RES_DIR + "z_words.txt"s , ios::out);
+    new_dict.open( OUTPUT_DIR + "clean_words.txt"s , ios::out);
     if(!new_dict.is_open()) {
         cerr << "Error opening new file." << endl;
         return -1;

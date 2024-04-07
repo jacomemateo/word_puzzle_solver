@@ -1,5 +1,19 @@
 #pragma once
+#include <concepts>
 #include "trie_node.h"
+
+template<typename T>
+concept arithmetic = std::integral<T>; // Inculdes char!
+
+template<typename T>
+struct tree_traits {
+    using container_type = std::vector<T>;
+};
+
+template<>
+struct tree_traits<char> {
+    using container_type = std::string;
+};
 
 template<typename T>
 struct less_than_key
@@ -10,13 +24,15 @@ struct less_than_key
     }
 };
 
-template<typename T, typename nigga>
+template<typename T>
+requires arithmetic<T>
 class tree {
 public:
+    // friend class WordHuntSolver;
     tree();
 
-    void add_word(const nigga& line);
-    friend ostream& operator<<(ostream& stream, const tree<T, nigga>& tree) {
+    void add_word(const tree_traits<T>::container_type & line);
+    friend ostream& operator<<(ostream& stream, const tree<T>& tree) {
         stream << *(tree.m_head);
         return stream;
     }
@@ -27,13 +43,14 @@ private:
 
 #include "tree.h"
 
-template<typename T, typename nigga>
-tree<T, nigga>::tree() {
+template<typename T>
+requires arithmetic<T>
+tree<T>::tree() {
     m_head = make_shared<TrieNode<T>>();
 }
 
 template<>
-void tree<char, string>::add_word(const string& word) {
+void tree<char>::add_word(const tree_traits<char>::container_type& word) {
     shared_ptr<TrieNode<char>> curr_head = m_head;
 
     for (size_t i = 0; i < word.size(); ++i) {
@@ -63,12 +80,13 @@ void tree<char, string>::add_word(const string& word) {
     curr_head->set_end();
 }
 
-template<>
-void tree< short, vector<short> >::add_word(const vector<short>& word) {
-    shared_ptr<TrieNode<short>> curr_head = m_head;
+template<typename T>
+requires arithmetic<T>
+void tree<T>::add_word(const tree_traits<T>::container_type & word) {
+    shared_ptr<TrieNode<T>> curr_head = m_head;
 
     for (size_t i = 0; i < word.size(); ++i) {
-        vector<shared_ptr<TrieNode<short>>>& curr_vec = curr_head->get_next();
+        vector<shared_ptr<TrieNode<T>>>& curr_vec = curr_head->get_next();
 
         bool found = false;
         size_t found_index = 0;
@@ -88,8 +106,9 @@ void tree< short, vector<short> >::add_word(const vector<short>& word) {
             curr_head = curr_vec[found_index];
         }
 
-        std::sort(curr_vec.begin(), curr_vec.end(), less_than_key<short>());
+        std::sort(curr_vec.begin(), curr_vec.end(), less_than_key<T>());
 
-        // curr_head->set_end();
     }
+
+    curr_head->set_end();
 }

@@ -7,9 +7,12 @@
 
 using namespace std;
 
-template<typename T>
+
+template <typename T>
 class TrieNode : public std::enable_shared_from_this<TrieNode<T>> {
 public:
+    // friend class WordHuntSolver;
+
     TrieNode(); // Default constructor
     explicit TrieNode(T data, shared_ptr<TrieNode<T>> prev = nullptr); // Constructor with data and previous node
 
@@ -63,8 +66,8 @@ bool TrieNode<T>::get_end() const {
     return m_end_of_word;
 }
 
-template<>
-void TrieNode<short>::recursive_traversal(string& output, string prev, const vector<shared_ptr<TrieNode<short>>>& current) const {
+template<typename T>
+void TrieNode<T>::recursive_traversal(string& output, string prev, const vector<shared_ptr<TrieNode<T>>>& current) const {
     if (current.empty()) {
         output += "EMPTY\n";
         return;
