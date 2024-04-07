@@ -11,15 +11,15 @@ void convert(vector<string>& puz, short num) {
 
 int main() {
     vector<string> puzzle_vec = {
-        "EOUP",
-        "DRTC",
-        "BSFA",
-        "JGST"
+        "MBUP",
+        "AITT",
+        "TCHA",
+        "EOSC"
     };
 
 
     // WordHuntSolver whs = WordHuntSolver("words.txt", "positions.txt", puzzle_vec);
-    WordHuntSolver whs = WordHuntSolver("test_words.txt", "test_positions.txt", puzzle_vec);
+    WordHuntSolver whs = WordHuntSolver("test_words.txt", "positions.txt", puzzle_vec);
 
     whs.find();
 

@@ -5,14 +5,14 @@
 struct found_match {
     vector<shared_ptr<TrieNode<char>>>& current;
     bool found;
+    bool end;
 };
 
 class WordHuntSolver {
 public:
     WordHuntSolver(string dictionary_path, string paths_file, vector<string> puzzle_vec);
 
-    void recuse_paths(string& current_word, vector<string>& found_words, const vector<shared_ptr<TrieNode<short>>>& current,  vector<shared_ptr<TrieNode<char>>>& current_nigga);
-    found_match recuse_dict(char puzzle_letter, vector<shared_ptr<TrieNode<char>>>& current);
+    void recuse_paths(string& current_word, vector<string>& found_words, vector<shared_ptr<TrieNode<short>>>& current,  vector<shared_ptr<TrieNode<char>>>& current_nigga);
     void find();
 
 private:
@@ -70,43 +70,41 @@ WordHuntSolver::WordHuntSolver(string dictionary_path, string paths_path, vector
     }
 }
 
-found_match WordHuntSolver::recuse_dict(char puzzle_letter, vector<shared_ptr<TrieNode<char>>>& current) {
-    for(auto& c : current) {
-        if( c->get_data() == puzzle_letter ) {
-            return found_match {
-                c->get_next(),
-                true
-            };
+
+void WordHuntSolver::recuse_paths(string& current_word, vector<string>& found_words, vector<shared_ptr<TrieNode<short>>>& current_path_vec, vector<shared_ptr<TrieNode<char>>>& current_char_vec) {
+    
+    // Iterate over
+    for (const auto& path_vec : current_path_vec) {
+        short index = path_vec->m_data;
+        char current_letter =  m_puzzle_vec[(index-1)/4][(index-1)%4];
+
+        bool exists = false;
+        bool end_char = true;
+
+        // cout << "iterating thru node: " << index  << "\tSize of current_char_vec " << current_char_vec.size() << endl;
+
+        // Check if the letter exists in the current path
+        for(auto& trie_char_node : current_char_vec) {
+            // cout << '\'' << trie_char_node->get_data() << '\'' << " ?= " << '\'' << current_letter << '\'' << endl;
+            if( trie_char_node->get_data() == current_letter ) {
+                end_char = trie_char_node->get_end();
+                exists = true;
+            
+                current_char_vec = trie_char_node->get_next();
+                break;
+            }
         }
-    }
 
-    return found_match {
-        current,
-        false
-    };
-}
-
-void WordHuntSolver::recuse_paths(string& current_word, vector<string>& found_words, const vector<shared_ptr<TrieNode<short>>>& current, vector<shared_ptr<TrieNode<char>>>& current_nigga) {
-    for (const auto& child : current) {
-        short index = child->m_data;
-        char puzzle_letter =  m_puzzle_vec[(index-1)/4][(index-1)%4];
-
-        found_match found = recuse_dict(puzzle_letter, current_nigga);
-
-        if ( found.found ) {
-            current_word += puzzle_letter;
-            recuse_paths(current_word, found_words, child->m_next_nodes, found.current);
-        } else {
-            current_word = "";
+        if(exists) {
+            current_word += current_letter;
+            recuse_paths(current_word, found_words, path_vec->get_next(), current_char_vec );
         }
-        // current_nigga = m_alphabet_tree.m_head->get_next();
-        // return;
 
-        if(child->get_end()) {
+        if(path_vec->get_end() && end_char) {
             found_words.push_back(current_word);
             current_word = "";
+            current_char_vec =  m_alphabet_tree.m_head->get_next();
         }
-
     }
 }
 
@@ -114,7 +112,9 @@ void WordHuntSolver::find() {
     vector<string> found_words;
     string current_word;
 
-    recuse_paths(current_word, found_words, m_path_tree.m_head->get_next(), m_alphabet_tree.m_head->get_next() );
+    auto m = m_alphabet_tree.m_head->get_next();
+
+    recuse_paths(current_word, found_words, m_path_tree.m_head->get_next(), m );
 
     for(auto word : found_words) {
         cout << word << endl;
