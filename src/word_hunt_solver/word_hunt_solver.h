@@ -79,32 +79,46 @@ void WordHuntSolver::recuse_paths(string& current_word, vector<string>& found_wo
         char current_letter =  m_puzzle_vec[(index-1)/4][(index-1)%4];
 
         bool exists = false;
-        bool end_char = true;
+        bool prev_exists = false;
+        bool end_char = false;
 
-        // cout << "iterating thru node: " << index  << "\tSize of current_char_vec " << current_char_vec.size() << endl;
 
         // Check if the letter exists in the current path
         for(auto& trie_char_node : current_char_vec) {
-            // cout << '\'' << trie_char_node->get_data() << '\'' << " ?= " << '\'' << current_letter << '\'' << endl;
             if( trie_char_node->get_data() == current_letter ) {
                 end_char = trie_char_node->get_end();
                 exists = true;
             
+                if(trie_char_node->get_prev()->get_end()) {
+                    prev_exists = true;
+                }
+
                 current_char_vec = trie_char_node->get_next();
                 break;
             }
         }
 
+
         if(exists) {
             current_word += current_letter;
             recuse_paths(current_word, found_words, path_vec->get_next(), current_char_vec );
+        } else {
+            continue;
         }
 
-        if(path_vec->get_end() && end_char) {
+        if( end_char ) {
+            cout << "End char: " << current_letter << "\tCurrent word: " << current_word << endl;
             found_words.push_back(current_word);
-            current_word = "";
+            
+            if(prev_exists) {
+                current_word.pop_back();
+            } else {
+                current_word = "";
+            }
+
             current_char_vec =  m_alphabet_tree.m_head->get_next();
         }
+
     }
 }
 
@@ -116,7 +130,10 @@ void WordHuntSolver::find() {
 
     recuse_paths(current_word, found_words, m_path_tree.m_head->get_next(), m );
 
+    cout << "\nWORDS:\n";
     for(auto word : found_words) {
         cout << word << endl;
     }
+
+    // cout << m_alphabet_tree << endl << m_path_tree << endl;
 }

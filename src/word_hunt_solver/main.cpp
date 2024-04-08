@@ -19,7 +19,7 @@ int main() {
 
 
     // WordHuntSolver whs = WordHuntSolver("words.txt", "positions.txt", puzzle_vec);
-    WordHuntSolver whs = WordHuntSolver("test_words.txt", "positions.txt", puzzle_vec);
+    WordHuntSolver whs = WordHuntSolver("test_words.txt", "test_positions.txt", puzzle_vec);
 
     whs.find();
 
